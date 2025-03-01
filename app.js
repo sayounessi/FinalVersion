@@ -126,15 +126,21 @@ app.get('/user-role/:userId', (req, res) => {
     }
 });
 
-app.post('/create-user', (req, res) => {
-    const { telegramId, name, role, timezone } = req.body;
-    const sql = 'INSERT INTO users (telegram_id, name, role, timezone) VALUES (?, ?, ?, ?)';
-    
-    db.query(sql, [telegramId, name, role, timezone], (err, result) => {
+app.post('/create-chat', (req, res) => {
+    console.log('Получен запрос на создание чата:', req.body); // Логируем тело запроса
+    const { chatName } = req.body;
+
+    if (!chatName) {
+        return res.status(400).send({ message: 'Название чата не указано' });
+    }
+
+    const sql = 'INSERT INTO chats (name) VALUES (?)';
+    db.query(sql, [chatName], (err, result) => {
         if (err) {
-            return res.status(400).send({ message: 'Ошибка при создании пользователя' });
+            console.error('Ошибка при создании чата:', err); // Логируем ошибку
+            return res.status(500).send({ message: 'Ошибка при создании чата' });
         }
-        res.status(201).send({ message: 'Пользователь успешно создан' });
+        res.status(201).send({ message: 'Чат успешно создан' });
     });
 });
 
