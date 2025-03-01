@@ -1,0 +1,110 @@
+/* Основные стили для всего приложения */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Стили для заголовков */
+h2 {
+    color: #333;
+}
+
+/* Стили для контейнера чатов */
+#chat-list {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Стили для списка чатов */
+#chats {
+    list-style-type: none;
+    padding: 0;
+}
+
+/* Стили для каждого элемента чата */
+#chats li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#chats li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Стили для ввода названия чата */
+#chat-name {
+    width: calc(100% - 10px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Стили для кнопки создания чата */
+#create-chat {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#create-chat:hover {
+    background-color: #218838;
+}
+
+/* Стили для окна чата */
+#chat-window {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Стили для сообщений */
+#messages {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+/* Стили для ввода сообщения */
+#message {
+    width: calc(100% - 10px);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Стили для кнопки отправки сообщения */
+#send-message {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#send-message:hover {
+    background-color: #0056b3;
+}
+
+/* Стили для информации о роли пользователя */
+#role-info {
+    color: #555;
+    margin-bottom: 20px;
+}

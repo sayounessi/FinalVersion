@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат Telegram</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="role-info" style="display:none;"></div>
+    <div id="chat-list">
+        <h2>Чаты</h2>
+        <ul id="chats"></ul>
+        <input type="text" id="chat-name" placeholder="Название чата" style="display:none;">
+        <button id="create-chat" style="display:none;">Создать чат</button>
+    </div>
+    <div id="chat-window" style="display: none;">
+        <h2 id="current-chat"></h2>
+        <div id="messages" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll;"></div>
+        <input type="text" id="message" placeholder="Введите ваше сообщение" />
+        <button id="send-message">Отправить</button>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const userId = 12345; 
+        let userRole = ''; 
+        let currentChatId = null; 
+
+        function getUserRole(userId) {
+    fetch(`http://localhost:3000/user-role/${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка при получении роли пользователя');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Обработка данных
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+        });
+}
+
+        function checkUserRole() {
+            document.getElementById('role-info').innerText = `Ваша роль: ${userRole}`;
+            document.getElementById('role-info').style.display = 'block';
+
+            if (userRole === 'admin') {
+                document.getElementById('chat-name').style.display = 'block';
+                document.getElementById('create-chat').style.display = 'block';
+            }
+        }
+
+        document.getElementById('create-chat').onclick = function() {
+            const chatName = document.getElementById('chat-name').value;
+            if (chatName) {
+                fetch('/create-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ chatName, userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('chat-name').value = '';
+                    loadChats(); // Обновляем список чатов
+                });
+            }
+        };
+
+        document.getElementById('send-message').onclick = function() {
+            const messageInput = document.getElementById('message');
+            const messageText = messageInput.value;
+            if (messageText && currentChatId) {
+                const messageData = {
+                    chatId: currentChatId,
+                    userId: userId,
+                    message: messageText
+                };
+                socket.emit('sendMessage', messageData);
+                messageInput.value = ''; // Очищаем поле ввода
+            }
+        };
+
+        socket.on('receiveMessage', (data) => {
+    const messageElement = document.createElement('div');
+    messageElement.innerText = `${data.userId}: ${data.message}`;
+    document.getElementById('messages').appendChild(messageElement);
+});
+        function selectChat(chatId) {
+    currentChatId = chatId;
+    document.getElementById('current-chat').innerText = `Чат: ${chatId}`;
+    document.getElementById('chat-window').style.display = 'block';
+    document.getElementById('messages').innerHTML = ''; // Очищаем предыдущие сообщения
+
+    // Загружаем сообщения из базы данных
+    fetch(`/get-messages/${chatId}`)
+        .then(response => response.json())
+        .then(messages => {
+            messages.forEach(msg => {
+                const messageElement = document.createElement('div');
+                messageElement.innerText = `${msg.userName}: ${msg.message}`;
+                document.getElementById('messages').appendChild(messageElement);
+            });
+        })
+        .catch(error => {
+            console.error('Ошибка при загрузке сообщений:', error);
+        });
+
+    socket.emit('joinChat', chatId); // Присоединяемся к чату
+}
+
+        // Получение списка чатов при загрузке страницы
+        function loadChats() {
+            fetch('/get-chats')
+                .then(response => response.json())
+                .then(chats => {
+                    const chatsList = document.getElementById('chats');
+                    chatsList.innerHTML = ''; // Очищаем список чатов
+                    chats.forEach(chat => {
+                        const chatItem = document.createElement('li');
+                        chatItem.innerText = chat.name; // Предполагаем, что у чата есть поле name
+                        chatItem.onclick = () => selectChat(chat.id); // Устанавливаем обработчик клика
+                        chatsList.appendChild(chatItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке чатов:', error);
+                });
+        }
+
+        // Вызов функции для получения роли и загрузки чатов при загрузке страницы
+        window.onload = function() {
+            getUserRole();
+            loadChats();
+        };
+    </script>
+</body>
+</html>

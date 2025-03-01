@@ -1,0 +1,21 @@
+{
+  "name": "telegrammapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.2",
+    "http": "^0.0.1-security",
+    "mongoose": "^8.11.0",
+    "mysql": "^2.18.1",
+    "node-telegram-bot-api": "^0.66.0",
+    "php": "^1.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "description": ""
+}
