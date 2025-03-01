@@ -100,7 +100,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ chatName})
+                    body: JSON.stringify({ chatName, userId })
                 })
                 .then(response => response.json())
                 .then(data => {
