@@ -50,9 +50,9 @@
             position: fixed; /* Фиксированное позиционирование */
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон */
+            width: 100vw; /* Ширина на весь экран */
+            height: 100vh; /* Высота на весь экран */
+            background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный фон */
             justify-content: center;
             align-items: center;
             z-index: 1000; /* Поверх всех элементов */
@@ -62,9 +62,13 @@
             background-color: white;
             padding: 20px;
             border-radius: 8px;
-            width: 400px; /* Ширина окна чата */
-            max-height: 80%; /* Максимальная высота окна */
+            width: 90%; /* Ширина 90% от экрана */
+            max-width: 600px; /* Максимальная ширина */
+            height: 90%; /* Высота 90% от экрана */
+            max-height: 90%; /* Максимальная высота */
             overflow-y: auto; /* Прокрутка, если содержимое превышает высоту */
+            display: flex;
+            flex-direction: column; /* Вертикальная компоновка */
         }
 
         #close-modal {
@@ -82,7 +86,7 @@
     <div id="chat-window" style="display: none;">
         <div id="chat-content">
             <h2 id="current-chat"></h2>
-            <div id="messages" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll;"></div>
+            <div id="messages" style="border: 1px solid #ccc; flex: 1; overflow-y: scroll;"></div>
             <input type="text" id="message" placeholder="Введите ваше сообщение" />
             <button id="send-message">Отправить</button>
             <button id="close-chat">Закрыть чат</button>
