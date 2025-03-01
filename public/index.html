@@ -45,6 +45,28 @@
             text-align: center;
         }
 
+        #chat-window {
+            display: none; /* Изначально скрыто */
+            position: fixed; /* Фиксированное позиционирование */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Полупрозрачный фон */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000; /* Поверх всех элементов */
+        }
+
+        #chat-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 400px; /* Ширина окна чата */
+            max-height: 80%; /* Максимальная высота окна */
+            overflow-y: auto; /* Прокрутка, если содержимое превышает высоту */
+        }
+
         #close-modal {
             cursor: pointer;
             color: red;
@@ -58,10 +80,13 @@
         <ul id="chats"></ul>
     </div>
     <div id="chat-window" style="display: none;">
-        <h2 id="current-chat"></h2>
-        <div id="messages" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll;"></div>
-        <input type="text" id="message" placeholder="Введите ваше сообщение" />
-        <button id="send-message">Отправить</button>
+        <div id="chat-content">
+            <h2 id="current-chat"></h2>
+            <div id="messages" style="border: 1px solid #ccc; height: 300px; overflow-y: scroll;"></div>
+            <input type="text" id="message" placeholder="Введите ваше сообщение" />
+            <button id="send-message">Отправить</button>
+            <button id="close-chat">Закрыть чат</button>
+        </div>
     </div>
 
     <!-- Кнопка для создания чата -->
@@ -111,6 +136,10 @@
                 });
             }
         }; 
+
+        document.getElementById('close-chat').onclick = function() {
+            document.getElementById('chat-window').style.display = 'none'; // Закрываем окно чата
+        };
 
         function getUserRole(userId) {
     fetch(`http://localhost:3000/user-role/${userId}`)
@@ -187,10 +216,11 @@
     messageElement.innerText = `${data.userId}: ${data.message}`;
     document.getElementById('messages').appendChild(messageElement);
 });
-        function selectChat(chatId) {
+
+function selectChat(chatId) {
     currentChatId = chatId;
     document.getElementById('current-chat').innerText = `Чат: ${chatId}`;
-    document.getElementById('chat-window').style.display = 'block';
+    document.getElementById('chat-window').style.display = 'flex'; // Показываем окно чата
     document.getElementById('messages').innerHTML = ''; // Очищаем предыдущие сообщения
 
     // Загружаем сообщения из базы данных
