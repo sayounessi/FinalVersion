@@ -5,14 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Чат Telegram</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Стили для кнопки с плюсиком */
+        #add-chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background-color: #28a745; /* Зеленый цвет */
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Стили для оверлея */
+        #chat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Стили для окна ввода */
+        #modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        #close-modal {
+            cursor: pointer;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <div id="role-info" style="display:none;"></div>
     <div id="chat-list">
         <h2></h2>
         <ul id="chats"></ul>
-        <input type="text" id="chat-name" placeholder="Название чата" style="display:none;">
-        <button id="create-chat" style="display:none;">Создать чат</button>
     </div>
     <div id="chat-window" style="display: none;">
         <h2 id="current-chat"></h2>
@@ -20,12 +63,54 @@
         <input type="text" id="message" placeholder="Введите ваше сообщение" />
         <button id="send-message">Отправить</button>
     </div>
+
+    <!-- Кнопка для создания чата -->
+    <button id="add-chat-button">+</button>
+
+    <!-- Окно для ввода названия чата -->
+    <div id="chat-modal">
+        <div id="modal-content">
+            <h3>Введите название чата</h3>
+            <input type="text" id="chat-name" placeholder="Название чата">
+            <button id="create-chat">Создать чат</button>
+            <button id="close-modal">Закрыть</button>
+        </div>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
         const userId = 12345; 
         let userRole = ''; 
         let currentChatId = null; 
+
+        document.getElementById('add-chat-button').onclick = function() {
+            document.getElementById('chat-modal').style.display = 'flex'; // Показываем модальное окно
+        };
+
+        document.getElementById('close-modal').onclick = function() {
+            document.getElementById('chat-modal').style.display = 'none'; // Закрываем модальное окно
+        };
+
+        document.getElementById('create-chat').onclick = function() {
+            const chatName = document.getElementById('chat-name').value;
+            if (chatName) {
+                fetch('/create-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ chatName, userId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById('chat-name').value = '';
+                    loadChats(); // Обновляем список чатов
+                    document.getElementById('chat-modal').style.display = 'none'; // Закрываем модальное окно
+                });
+            }
+        }; 
 
         function getUserRole(userId) {
     fetch(`http://localhost:3000/user-role/${userId}`)
@@ -114,8 +199,7 @@
     socket.emit('joinChat', chatId); // Присоединяемся к чату
 }
 
-        // Получение списка чатов при загрузке страницы
-        function loadChats() {
+function loadChats() {
             fetch('/get-chats')
                 .then(response => response.json())
                 .then(chats => {
@@ -135,7 +219,7 @@
 
         // Вызов функции для получения роли и загрузки чатов при загрузке страницы
         window.onload = function() {
-            getUserRole();
+            getUserRole(userId);
             loadChats();
         };
     </script>
