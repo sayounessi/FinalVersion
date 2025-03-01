@@ -146,7 +146,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ chatName }) // Убираем userId
+            body: JSON.stringify({ chatName }) // Убедитесь, что здесь передается правильное значение
         })
         .then(response => {
             if (!response.ok) {
