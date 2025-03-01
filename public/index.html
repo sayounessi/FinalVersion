@@ -141,7 +141,7 @@
         document.getElementById('create-chat').onclick = function() {
     const chatName = document.getElementById('chat-name').value;
     if (chatName) {
-        fetch('/create-chat', {
+        fetch('http://localhost:3000/create-chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
