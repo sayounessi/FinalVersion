@@ -142,28 +142,25 @@
     const chatName = document.getElementById('chat-name').value;
     if (chatName) {
         fetch('/create-chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ chatName })
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Ошибка при создании чата');
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert(data.message);
-            document.getElementById('chat-name').value = '';
-            loadChats(); // Обновляем список чатов
-            document.getElementById('chat-modal').style.display = 'none'; // Закрываем модальное окно
-        })
-        .catch(error => {
-            console.error('Ошибка:', error);
-            alert('Не удалось создать чат. Пожалуйста, попробуйте еще раз.');
-        });
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ chatName })
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Ошибка при создании чата');
+    }
+    return response.json();
+})
+.then(data => {
+    alert(data.message);
+})
+.catch(error => {
+    console.error('Ошибка:', error);
+    alert('Не удалось создать чат. Пожалуйста, попробуйте еще раз.');
+});
     } else {
         alert('Пожалуйста, введите название чата.');
     }
