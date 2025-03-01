@@ -112,8 +112,14 @@ bot.on('callback_query', (query) => {
 });
 
 app.get('/get-chats', (req, res) => {
-    const chatList = Object.keys(chats).map(chatName => ({ name: chatName, id: chatName }));
-    res.status(200).send(chatList);
+    const sql = 'SELECT * FROM chats'; // Запрос к базе данных для получения всех чатов
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).send({ message: 'Ошибка при получении чатов' });
+        }
+        res.status(200).send(results); // Возвращаем результаты
+    });
 });
 
 app.get('/user-role/:userId', (req, res) => {
