@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="style.css">
     <style>
         /* Стили для кнопки с плюсиком */
+        body{
+            background-color: #6eb5c9;
+        }
+
         #add-chat-button {
             position: fixed;
             bottom: 0px;
@@ -24,6 +28,44 @@
             justify-content: center;
         }
 
+        #poisk-input{
+            width: 100%;
+            height: 50px;
+            border-radius: 15px;
+            position: absolute;
+            left:0px;
+            top: -10px;
+            box-shadow:1px 1px 1px 0px #5f92a0;
+            background-color: #6eb5c9;
+        }
+
+        #poisk-input img{
+            top:13px;
+            position: absolute;
+            left: 30px;
+        }
+
+        #poisk{
+            position: absolute;
+            top:19px;
+            height: 20px;
+            font-size: 29px;
+            background-color: #6eb5c9;
+            border: none;
+            left: 80px;
+            height: 25px;
+        }
+
+        
+        li{
+            background-color: rgb(255, 255, 255);
+            margin-bottom: 20px;
+            min-height: 50px;
+            border-radius: 20px;
+            text-align: center;
+            vertical-align:middle;
+        }
+
         /* Стили для оверлея */
         #chat-modal {
             display: none;
@@ -39,7 +81,7 @@
 
         /* Стили для окна ввода */
         #modal-content {
-            background-color: white;
+            background-color: rgb(247, 0, 0);
             padding: 20px;
             border-radius: 8px;
             text-align: center;
@@ -49,8 +91,9 @@
             display: none; /* Изначально скрыто */
             position: fixed; /* Фиксированное позиционирование */
             top: -30px;
-            left: -20px;
-            width: 100%; /* Ширина на весь экран */
+            border-radius: 0%;
+            left: -2px;
+            width: 100vw; /* Ширина на весь экран */
             height: 100%; /* Высота на весь экран */
             background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный фон */
             justify-content: center;
@@ -75,12 +118,21 @@
             cursor: pointer;
             color: red;
         }
+
+        #chat-list{
+            background-color: #6eb5c9;
+            box-shadow: none;
+        }
+
     </style>
 </head>
 <body>
     <div id="role-info" style="display:none;"></div>
+    <div id="poisk-input">
+        <img src="img/icons8-search-50.png" width="35px">
+        <input type="text" placeholder="Поиск" id="poisk">
+    </div>
     <div id="chat-list">
-        <h2></h2>
         <ul id="chats"></ul>
     </div>
     <div id="chat-window" style="display: none;">
@@ -249,11 +301,11 @@ function loadChats() {
                 .then(response => response.json())
                 .then(chats => {
                     const chatsList = document.getElementById('chats');
-                    chatsList.innerHTML = ''; // Очищаем список чатов
+                    chatsList.innerHTML = ''; 
                     chats.forEach(chat => {
                         const chatItem = document.createElement('li');
-                        chatItem.innerText = chat.name; // Предполагаем, что у чата есть поле name
-                        chatItem.onclick = () => selectChat(chat.id); // Устанавливаем обработчик клика
+                        chatItem.innerText = chat.name;
+                        chatItem.onclick = () => selectChat(chat.id);
                         chatsList.appendChild(chatItem);
                     });
                 })
@@ -262,7 +314,6 @@ function loadChats() {
                 });
         }
 
-        // Вызов функции для получения роли и загрузки чатов при загрузке страницы
         window.onload = function() {
             getUserRole(userId);
             loadChats();
