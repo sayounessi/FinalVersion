@@ -211,7 +211,7 @@
 }
 
 function loadChats() {
-            fetch('/get-chats')
+            fetch('http://localhost:3000/get-chats')
                 .then(response => response.json())
                 .then(chats => {
                     const chatsList = document.getElementById('chats');
