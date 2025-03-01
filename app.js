@@ -5,7 +5,7 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo('http://localhost:3000');
+const io = socketIo(server);
 const mysql = require('mysql');
 const cors = require('cors');
 app.use(cors());
