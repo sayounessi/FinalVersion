@@ -130,6 +130,7 @@ app.get('/user-role/:userId', (req, res) => {
 app.use(express.json());
 
 app.post('/create-chat', (req, res) => {
+    console.log('Получен запрос на создание чата:', req.body);
     const { chatName } = req.body;
     const sql = 'INSERT INTO chats (name) VALUES (?)';
 
