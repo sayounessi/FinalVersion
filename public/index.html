@@ -9,8 +9,8 @@
         /* Стили для кнопки с плюсиком */
         body{
             background-color: #6eb5c9;
+            margin: 0; /* Убираем отступы по умолчанию */
         }
-
         #add-chat-button {
             position: fixed;
             bottom: 0px;
@@ -23,7 +23,7 @@
             font-size: 24px;
             cursor: pointer;
             display: flex;
-            margin-left:-20px;
+            margin-left: -20px;
             align-items: center;
             justify-content: center;
         }
@@ -89,12 +89,11 @@
 
         #chat-window {
             display: none; /* Изначально скрыто */
-            position: absolute; /* Фиксированное позиционирование */
+            position: fixed; /* Фиксированное позиционирование */
             top: 0;
-            border-radius: 0%;
             left: 0;
-            width: 100%; /* Ширина на весь экран */
-            height: 100%; /* Высота на весь экран */
+            width: 100vw; /* Ширина на весь экран */
+            height: 100vh; /* Высота на весь экран */
             background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный фон */
             justify-content: center;
             align-items: center;
@@ -103,13 +102,13 @@
 
         #chat-content {
             background-color: white;
+            position: absolute;
             padding: 20px;
-            border-radius: 8px;
-            width: 90%; /* Ширина 90% от экрана */
-            max-width: 600px; /* Максимальная ширина */
-            height: 90%; /* Высота 90% от экрана */
-            max-height: 90%; /* Максимальная высота */
-            overflow-y: auto; /* Прокрутка, если содержимое превышает высоту */
+            top:0px;
+            border-radius: 0; /* Убираем закругление углов */
+            width: 100%; /* Ширина 100% от экрана */
+            height: 91%; /* Высота 100% от экрана */
+            overflow: hidden; /* Убираем прокрутку, если не нужна */
             display: flex;
             flex-direction: column; /* Вертикальная компоновка */
         }
@@ -136,8 +135,9 @@
             position: absolute;
         }
 
-        #messages{
-            border: none;
+        #messages {
+            flex: 1; /* Заполняет оставшееся пространство */
+            overflow-y: auto; /* Прокрутка, если содержимое превышает высоту */
         }
 
     </style>
