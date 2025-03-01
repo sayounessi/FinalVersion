@@ -81,7 +81,7 @@
 
         /* Стили для окна ввода */
         #modal-content {
-            background-color: rgb(247, 0, 0);
+            background-color: rgb(122, 232, 240);
             padding: 20px;
             border-radius: 8px;
             text-align: center;
@@ -89,12 +89,12 @@
 
         #chat-window {
             display: none; /* Изначально скрыто */
-            position: fixed; /* Фиксированное позиционирование */
-            top: -30px;
+            position: absolute; /* Фиксированное позиционирование */
+            top: -50px;
             border-radius: 0%;
-            left: -2px;
-            width: 100vw; /* Ширина на весь экран */
-            height: 100%; /* Высота на весь экран */
+            left: -60px;
+            width: 112vw; /* Ширина на весь экран */
+            height: 147vw; /* Высота на весь экран */
             background-color: rgba(0, 0, 0, 0.9); /* Полупрозрачный фон */
             justify-content: center;
             align-items: center;
@@ -124,6 +124,22 @@
             box-shadow: none;
         }
 
+        #close-chat{
+            position: absolute;
+            background:none;
+            border: none;
+        }
+
+        #current-chat{
+            top:55px;
+            right: 45%;
+            position: absolute;
+        }
+
+        #messages{
+            border: none;
+        }
+
     </style>
 </head>
 <body>
@@ -138,10 +154,11 @@
     <div id="chat-window" style="display: none;">
         <div id="chat-content">
             <h2 id="current-chat"></h2>
-            <div id="messages" style="border: 1px solid #ccc; flex: 1; overflow-y: scroll;"></div>
-            <input type="text" id="message" placeholder="Введите ваше сообщение" />
+            <div id="messages" style="flex: 1; overflow-y: scroll;"></div>
+            <button id="smile-button" style="position: absolute; bottom:60px; background:none; border: none;"><img src="img/icons8-smile-48.png"></button>
+            <input type="text" id="message" placeholder="Напишите сообщение..." style="position: absolute; bottom: 60px; width: 60%;" />
             <button id="send-message">Отправить</button>
-            <button id="close-chat">Закрыть чат</button>
+            <button id="close-chat"><img src="img/icons8-back-30.png" width="40px"></button>
         </div>
     </div>
 
