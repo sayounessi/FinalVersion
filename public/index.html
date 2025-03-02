@@ -178,7 +178,7 @@
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const userId = 12345; 
+        const userId = 1274161462; 
         let userRole = ''; 
         let currentChatId = null; 
 
@@ -276,12 +276,7 @@
             const messageInput = document.getElementById('message');
             const messageText = messageInput.value;
             if (messageText && currentChatId) {
-                const messageData = {
-                    chatId: currentChatId,
-                    userId: userId,
-                    message: messageText
-                };
-                socket.emit('sendMessage', messageData);
+                socket.emit('sendMessage', { currentChatId, userId, message: messageText }); // Отправляем сообщение
                 messageInput.value = ''; // Очищаем поле ввода
             }
         };
