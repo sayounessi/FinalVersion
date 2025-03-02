@@ -82,7 +82,11 @@ bot.on('callback_query', (query) => {
     const role = query.data.replace('role_', ''); // Убираем 'role_' из названия роли
     users[chatId].role = role; // Добавляем роль к пользователю
 
-    bot.sendMessage(chatId, `Вы успешно зарегистрированы как ${users[chatId].name}, роль: ${role}! Пожалуйста, введите ваш часовой пояс (например, UTC+3):`);
+    bot.sendMessage(chatId, `Вы успешно зарегистрированы как ${users[chatId].name}, роль: ${role}! Пожалуйста, введите ваш часовой пояс (например, UTC+3):`, {
+        reply_markup: {
+            remove_keyboard: true // Удаляем клавиатуру с ролями
+        }
+    });
     
     bot.once('message', (timezoneMsg) => {
         const timezone = timezoneMsg.text; // Сохраняем часовой пояс
