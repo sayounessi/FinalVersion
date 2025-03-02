@@ -8,6 +8,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 const mysql = require('mysql');
 const cors = require('cors');
+
 app.use(cors());
 app.use(express.json());
 
@@ -29,7 +30,7 @@ db.connect((err) => {
 });
 
 // Замените 'YOUR_TELEGRAM_BOT_TOKEN' на токен вашего бота
-const bot = new TelegramBot('7714783370:AAHeFnV7MTatIzDwQPNxX5KFDczgs4KTgB8', { polling: true });
+const bot = new TelegramBot('YOUR_TELEGRAM_BOT_TOKEN', { polling: true });
 
 let chats = {};
 let users = {}; // Хранит пользователей с их Telegram ID и ролями
@@ -110,6 +111,7 @@ bot.on('callback_query', (query) => {
     });
 });
 
+// Получение всех чатов
 app.get('/get-chats', (req, res) => {
     const sql = 'SELECT * FROM chats'; // Запрос к базе данных для получения всех чатов
 
@@ -121,6 +123,7 @@ app.get('/get-chats', (req, res) => {
     });
 });
 
+// Получение роли пользователя
 app.get('/user-role/:userId', (req, res) => {
     const userId = req.params.userId;
     const user = users[userId];
@@ -132,10 +135,8 @@ app.get('/user-role/:userId', (req, res) => {
     }
 });
 
-app.use(express.json());
-
+// Создание нового чата
 app.post('/create-chat', (req, res) => {
-    console.log('Получен запрос на создание чата:', req.body);
     const { chatName } = req.body;
     const sql = 'INSERT INTO chats (name) VALUES (?)';
 
@@ -144,9 +145,23 @@ app.post('/create-chat', (req, res) => {
             return res.status(400).send({ message: 'Ошибка при создании чата' });
         }
         res.status(201).send({ message: 'Чат успешно создан' });
+
+        // Добавление пользователя в чат после его создания
+        const chatId = result.insertId; // Получаем ID созданного чата
+        const userId = req.body.userId; // Получаем ID пользователя из запроса
+
+        const sqlAddUser  = 'INSERT INTO chat_users (chat_id, user_id) VALUES (?, ?)';
+        db.query(sqlAddUser , [chatId, userId], (err) => {
+            if (err) {
+                console.error('Ошибка при добавлении пользователя в чат:', err);
+            } else {
+                console.log(`Пользователь ${userId} добавлен в чат ${chatId}`);
+            }
+        });
     });
 });
 
+// Обработка подключения сокетов
 io.on('connection', (socket) => {
     console.log('Новый пользователь подключен');
 
@@ -155,7 +170,7 @@ io.on('connection', (socket) => {
 
         // Сохраняем сообщение в базе данных
         const sql = 'INSERT INTO messages (chat_id, user_id, message) VALUES (?, ?, ?)';
-        db.query(sql, [chatId, userId, message], (err, result) => {
+        db.query(sql, [chatId, userId, message], (err) => {
             if (err) {
                 console.error('Ошибка при сохранении сообщения:', err);
                 return;
@@ -176,6 +191,7 @@ io.on('connection', (socket) => {
     });
 });
 
+// Получение сообщений из чата
 app.get('/get-messages/:chatId', (req, res) => {
     const chatId = req.params.chatId;
     const sql = 'SELECT messages.message, users.name AS userName FROM messages JOIN users ON messages.user_id = users.id WHERE messages.chat_id = ?';
@@ -188,18 +204,7 @@ app.get('/get-messages/:chatId', (req, res) => {
     });
 });
 
-app.post('/add-user-to-chat', (req, res) => {
-    const { chatId, userId } = req.body;
-    const sql = 'INSERT INTO chat_users (chat_id, user_id) VALUES (?, ?)';
-
-    db.query(sql, [chatId, userId], (err, result) => {
-        if (err) {
-            return res.status(400).send({ message: 'Ошибка при добавлении пользователя в чат' });
-        }
-        res.status(201).send({ message: 'Пользователь успешно добавлен в чат' });
-    });
-});
-
+// Запуск сервера
 server.listen(3000, () => {
     console.log('Сервер запущен на http://localhost:3000');
 });
