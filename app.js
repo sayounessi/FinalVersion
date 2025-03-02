@@ -101,7 +101,7 @@ bot.on('callback_query', (query) => {
         .then(response => response.json())
         .then(data => {
             if (data.message) {
-                bot.sendMessage(chatId, `Вы успешно зарегистрированы! Ваше имя: ${name}, роль: ${role}, часовой пояс: ${timezone}. Теперь вы можете открыть веб-приложение по следующей ссылке:\nhttp://localhost:3000`);
+                bot.sendMessage(chatId, `Вы успешно зарегистрированы! Ваше имя: ${name}, роль: ${role}, часовой пояс: ${timezone}. Теперь вы можете открыть веб-приложение по рядом со строкой ввода сообщений!`);
             }
         })
         .catch(error => {
@@ -218,6 +218,19 @@ app.post('/add-user-to-chat', (req, res) => {
             return res.status(500).json({ message: 'Error adding user to chat' });
         }
         res.status(200).json({ message: 'User  added to chat successfully' });
+    });
+});
+
+app.post('/create-user', (req, res) => {
+    const { telegramId, name, role, timezone } = req.body;
+
+    const sql = 'INSERT INTO users (telegram_id, name, role, timezone) VALUES (?, ?, ?, ?)';
+    db.query(sql, [telegramId, name, role, timezone], (err, result) => {
+        if (err) {
+            console.error('Ошибка при добавлении пользователя в базу данных:', err);
+            return res.status(500).json({ message: 'Ошибка при добавлении пользователя' });
+        }
+        res.status(201).json({ message: 'Пользователь успешно добавлен' });
     });
 });
 
