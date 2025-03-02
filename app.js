@@ -38,7 +38,6 @@ app.use(express.static('public'));
 app.use(express.json());
 
 // Обработка команды /start
-// Обработка команды /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
 
