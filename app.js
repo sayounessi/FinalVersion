@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Создание подключения к базе данных
 const db = mysql.createConnection({
-    host: 'localhost',
+    host: '10.70.2.107',
     user: 'root', // Замените на ваше имя пользователя
     password: '', // Замените на ваш пароль
     database: 'telegram_chat_app' // Имя вашей базы данных
