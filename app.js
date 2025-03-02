@@ -167,15 +167,15 @@ io.on('connection', (socket) => {
 
     socket.on('sendMessage', (data) => {
         const { chatId, userId, message } = data;
-
+    
         // Сохраняем сообщение в базе данных
         const sql = 'INSERT INTO messages (chat_id, user_id, message) VALUES (?, ?, ?)';
-        db.query(sql, [chatId, userId, message], (err) => {
+        db.query(sql, [chatId, userId, message], (err, result) => {
             if (err) {
-                console.error('Ошибка при сохранении сообщения:', err);
-                return;
+                console.error('Ошибка при сохранении сообщения:', err); // Логируем ошибку
+                return; // Завершаем выполнение в случае ошибки
             }
-
+    
             // Отправляем сообщение всем участникам чата
             io.to(chatId).emit('receiveMessage', { userId, message });
         });
