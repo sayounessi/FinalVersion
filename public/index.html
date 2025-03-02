@@ -292,7 +292,7 @@ function selectChat(chatId) {
             document.getElementById('messages').innerHTML = ''; // Очищаем предыдущие сообщения
 
             // Загружаем сообщения из базы данных
-            fetch(`http://localhost:3000/get-messages/${chatId}`)
+            fetch(`http://localhost:3000/get-messages/${currentChatId}`)
                 .then(response => response.json())
                 .then(messages => {
                     messages.forEach(msg => {
