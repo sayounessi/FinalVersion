@@ -275,10 +275,8 @@
         document.getElementById('send-message').onclick = function() {
             const messageInput = document.getElementById('message');
             const messageText = messageInput.value;
-            if (messageText && currentChatId) {
                 socket.emit('sendMessage', { currentChatId, userId, message: messageText }); // Отправляем сообщение
                 messageInput.value = ''; // Очищаем поле ввода
-            }
         };
 
         socket.on('receiveMessage', (data) => {
