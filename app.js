@@ -38,6 +38,7 @@ app.use(express.static('public'));
 app.use(express.json());
 
 // Обработка команды /start
+// Обработка команды /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
 
@@ -110,23 +111,30 @@ bot.on('callback_query', (query) => {
     });
 });
 
-// Обработка запроса на добавление нескольких пользователей в чат
-app.post('/add-users-to-chat', (req, res) => {
-    const { chatId, userIds } = req.body; // Получаем chatId и массив userIds из запроса
-    const sql = 'INSERT INTO chat_users (chat_id, user_id) VALUES ?';
-    
-    // Формируем массив значений для вставки
-    const values = userIds.map(userId => [chatId, userId]);
+app.get('/get-chats', (req, res) => {
+    const sql = 'SELECT * FROM chats'; // Запрос к базе данных для получения всех чатов
 
-    db.query(sql, [values], (err, result) => {
+    db.query(sql, (err, results) => {
         if (err) {
-            return res.status(400).send({ message: 'Ошибка при добавлении пользователей в чат' });
+            return res.status(500).send({ message: 'Ошибка при получении чатов' });
         }
-        res.status(201).send({ message: 'Пользователи успешно добавлены в чат' });
+        res.status(200).send(results); // Возвращаем результаты
     });
 });
 
-// Обработка запроса на создание чата
+app.get('/user-role/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const user = users[userId];
+
+    if (user) {
+        res.status(200).send({ role: user.role });
+    } else {
+        res.status(404).send({ message: 'Пользователь не найден' });
+    }
+});
+
+app.use(express.json());
+
 app.post('/create-chat', (req, res) => {
     console.log('Получен запрос на создание чата:', req.body);
     const { chatName } = req.body;
@@ -139,7 +147,6 @@ app.post('/create-chat', (req, res) => {
         res.status(201).send({ message: 'Чат успешно создан' });
     });
 });
-
 
 io.on('connection', (socket) => {
     console.log('Новый пользователь подключен');
@@ -170,7 +177,30 @@ io.on('connection', (socket) => {
     });
 });
 
-// Запуск сервера
+app.get('/get-messages/:chatId', (req, res) => {
+    const chatId = req.params.chatId;
+    const sql = 'SELECT messages.message, users.name AS userName FROM messages JOIN users ON messages.user_id = users.id WHERE messages.chat_id = ?';
+
+    db.query(sql, [chatId], (err, results) => {
+        if (err) {
+            return res.status(400).send({ message: 'Ошибка при получении сообщений' });
+        }
+        res.status(200).send(results);
+    });
+});
+
+app.post('/add-user-to-chat', (req, res) => {
+    const { chatId, userId } = req.body;
+    const sql = 'INSERT INTO chat_users (chat_id, user_id) VALUES (?, ?)';
+
+    db.query(sql, [chatId, userId], (err, result) => {
+        if (err) {
+            return res.status(400).send({ message: 'Ошибка при добавлении пользователя в чат' });
+        }
+        res.status(201).send({ message: 'Пользователь успешно добавлен в чат' });
+    });
+});
+
 server.listen(3000, () => {
     console.log('Сервер запущен на http://localhost:3000');
 });
