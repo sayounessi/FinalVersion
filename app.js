@@ -204,7 +204,30 @@ app.get('/get-messages/:chatId', (req, res) => {
     });
 });
 
+app.post('/add-user-to-chat', (req, res) => {
+    const { chatId, userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User  ID cannot be null' });
+    }
+
+    const query = 'INSERT INTO chat_users (chat_id, user_id) VALUES (?, ?)';
+    connection.query(query, [chatId, userId], (error, results) => {
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).json({ message: 'Error adding user to chat' });
+        }
+        res.status(200).json({ message: 'User  added to chat successfully' });
+    });
+});
+
 // Запуск сервера
 server.listen(3000, () => {
     console.log('Сервер запущен на http://localhost:3000');
 });
+
+// ───▄████▄────────────────
+// ──███▄█▀─────────────────
+// ─▐████──────▄──▄──▄──▄──▄    ОСТАЛЬНОЙ КОД ДОЕЛИ...
+// ──█████▄─────────────────
+// ───▀████▀────────────────

@@ -14,6 +14,7 @@ function displayChats(chats) {
     });
 }
 
+
 function addUserToChat(chatId, userId) {
     fetch('/add-user-to-chat', {
         method: 'POST',
@@ -31,15 +32,14 @@ function addUserToChat(chatId, userId) {
     });
 }
 
-// Функция для присоединения к чату
 function joinChat(chatName) {
     if (currentChat) {
-        socket.emit('leaveChat', currentChat); // Оставляем предыдущий чат
+        socket.emit('leaveChat', currentChat); 
     }
     currentChat = chatName;
-    socket.emit('joinChat', chatName); // Присоединяемся к новому чату
+    socket.emit('joinChat', chatName); 
     document.getElementById('current-chat').innerText = `Чат: ${chatName}`;
-    document.getElementById('messages').innerHTML = ''; // Очищаем сообщения
+    document.getElementById('messages').innerHTML = ''; 
 }
 
 // Обработка получения сообщения
@@ -58,19 +58,10 @@ document.getElementById('send-message').onclick = function() {
     if (messageText && currentChatId) {
         const messageData = {
             chatId: currentChatId,
-            userId: userId, // Используйте идентификатор пользователя
+            userId: userId, 
             message: messageText
         };
         socket.emit('sendMessage', messageData);
         messageInput.value = ''; // Очищаем поле ввода
     }
 };
-
-// Функция для инициализации приложения
-function init() {
-    const exampleChats = ['Чат 1', 'Чат 2', 'Чат 3'];
-    displayChats(exampleChats);
-}
-
-// Запуск инициализации
-init();
