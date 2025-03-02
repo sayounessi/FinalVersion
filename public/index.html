@@ -155,15 +155,18 @@
         <div id="chat-content">
             <h2 id="current-chat"></h2>
             <div id="messages" style="flex: 1; overflow-y: scroll;"></div>
-            <input type="text" id="message" placeholder="Напишите сообщение..." />
-            <button id="send-message">Отправить</button>
-            <button id="close-chat">Закрыть чат</button>
+            <button id="smile-button" style="position: absolute; bottom:13%; background:none; border: none;"><img src="img/icons8-smile-48.png" width="40px"></button>
+            <input type="text" id="message" placeholder="Напишите сообщение..." style="position: absolute; bottom: 14%; left: 70px; height: 10px; width: 50%;" />
+            <button id="send-message" style="position: absolute; bottom:14%; height: 30px; right: 65px; width: 66px;">send</button>
+            <button id="close-chat"><img src="img/icons8-back-30.png" width="40px"></button>
         </div>
     </div>
 
+    <!-- Кнопка для создания чата -->
     <button id="add-chat-button">+</button>
 
-    <div id="chat-modal" style="display: none;">
+    <!-- Окно для ввода названия чата -->
+    <div id="chat-modal">
         <div id="modal-content">
             <h3>Введите название чата</h3>
             <input type="text" id="chat-name" placeholder="Название чата">
@@ -175,16 +178,19 @@
     <script src="http://localhost:3000/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const userId = 12345; // Замените на реальный ID пользователя
+        const userId = 12345; 
+        let userRole = ''; 
         let currentChatId = null; 
 
         document.getElementById('add-chat-button').onclick = function() {
-            document.getElementById('chat-modal').style.display = 'flex';
+            document.getElementById('chat-modal').style.display = 'flex'; // Показываем модальное окно
         };
 
         document.getElementById('close-modal').onclick = function() {
-            document.getElementById('chat-modal').style.display = 'none';
+            document.getElementById('chat-modal').style.display = 'none'; // Закрываем модальное окно
         };
+
+        
 
         document.getElementById('create-chat').onclick = function() {
             const chatName = document.getElementById('chat-name').value;
@@ -194,22 +200,78 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ chatName })
+                    body: JSON.stringify({ chatName, userId })
                 })
                 .then(response => response.json())
                 .then(data => {
                     alert(data.message);
                     document.getElementById('chat-name').value = '';
                     loadChats(); // Обновляем список чатов
-                    document.getElementById('chat-modal').style.display = 'none';
+                    document.getElementById('chat-modal').style.display = 'none'; // Закрываем модальное окно
                 });
             }
-        };
+        }; 
 
         document.getElementById('close-chat').onclick = function() {
-            document.getElementById('chat-window').style.display = 'none';
+            document.getElementById('chat-window').style.display = 'none'; // Закрываем окно чата
         };
 
+        function getUserRole(userId) {
+    fetch(`http://localhost:3000/user-role/${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка при получении роли пользователя');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Обработка данных
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+        });
+}
+
+        function checkUserRole() {
+            document.getElementById('role-info').innerText = `Ваша роль: ${userRole}`;
+            document.getElementById('role-info').style.display = 'block';
+
+            if (userRole === 'admin') {
+                document.getElementById('chat-name').style.display = 'block';
+                document.getElementById('create-chat').style.display = 'block';
+            }
+        }
+
+        document.getElementById('create-chat').onclick = function() {
+    const chatName = document.getElementById('chat-name').value;
+    if (chatName) {
+        fetch('http://localhost:3000/create-chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ chatName }) 
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка при создании чата');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert(data.message);
+            loadChats(); // Обновляем список чатов
+            document.getElementById('chat-name').value = '';
+            document.getElementById('chat-modal').style.display = 'none'; 
+        })
+        .catch(error => {
+            console.error('Ошибка:', error);
+            alert('Не удалось создать чат. Пожалуйста, попробуйте еще раз.');
+        });
+    } else {
+        alert('Пожалуйста, введите название чата.');
+    }
+};
         document.getElementById('send-message').onclick = function() {
             const messageInput = document.getElementById('message');
             const messageText = messageInput.value;
@@ -225,19 +287,19 @@
         };
 
         socket.on('receiveMessage', (data) => {
-            const messageElement = document.createElement('div');
-            messageElement.innerText = `${data.userId}: ${data.message}`;
-            document.getElementById('messages').appendChild(messageElement);
-        });
+    const messageElement = document.createElement('div');
+    messageElement.innerText = `${data.userId}: ${data.message}`;
+    document.getElementById('messages').appendChild(messageElement);
+});
 
-        function selectChat(chatId) {
+function selectChat(chatId) {
             currentChatId = chatId;
             document.getElementById('current-chat').innerText = `Чат: ${chatId}`;
-            document.getElementById('chat-window').style.display = 'flex'; // Показываем окно чата
+            document.getElementById('chat-window').style.display = 'flex'; 
             document.getElementById('messages').innerHTML = ''; // Очищаем предыдущие сообщения
 
             // Загружаем сообщения из базы данных
-            fetch(`/get-messages/${chatId}`)
+            fetch(`http://localhost:3000/get-messages/${chatId}`)
                 .then(response => response.json())
                 .then(messages => {
                     messages.forEach(msg => {
