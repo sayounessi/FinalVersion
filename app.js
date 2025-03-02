@@ -30,7 +30,7 @@ db.connect((err) => {
 });
 
 // Замените 'YOUR_TELEGRAM_BOT_TOKEN' на токен вашего бота
-const bot = new TelegramBot('YOUR_TELEGRAM_BOT_TOKEN', { polling: true });
+const bot = new TelegramBot('7714783370:AAHeFnV7MTatIzDwQPNxX5KFDczgs4KTgB8', { polling: true });
 
 let chats = {};
 let users = {}; // Хранит пользователей с их Telegram ID и ролями
